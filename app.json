@@ -1,0 +1,46 @@
+{
+    "name" : "ReactionButtonBot",
+    "description" : "A telegram bot to add like or dislike message",
+    "keywords" : [
+        "telegram",
+        "bot",
+        "heroku",
+        "python",
+        "pyrogram",
+        "app.json",
+        "app",
+        "button",
+        "like",
+        "dislike"
+    ],
+    "repository" : "https://github.com/AJTimePyro/",
+    "env" : {
+        "BOT_TOKEN" : {
+            "description" : "Get From https://t.me/BotFather"
+        },
+        "API_ID" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "API_HASH" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "MONGO_STR" : {
+            "description" : "Get From MongoDB Atlas."
+        },
+        "CHANNEL_ID" : {
+            "description" : "Your Channel ID"
+        }
+    },
+    "stack" : "heroku-20",
+    "buildpacks" : [
+        {
+            "url" : "heroku/python"
+        }
+    ],
+    "formation" : {
+        "worker" : {
+            "quantity" : 1,
+            "size" : "free"
+        }
+    }
+}
