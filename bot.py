@@ -3,6 +3,7 @@
 
 ### Importing
 # Importing External Packages
+import re
 from pyrogram import (
     Client,
     filters
@@ -10,6 +11,7 @@ from pyrogram import (
 from pyrogram.types import (
     Update,
     Message,
+    CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
@@ -40,30 +42,62 @@ app = Client(
 
 
 ### Handlers
-
 # Button adder
 @app.on_message(filters.chat(Config.CHANNEL_ID) & filters.document)
 async def buttonAdder(bot:Update, msg:Message):
-    try:
-        await msg.edit_reply_markup(
+    return await msg.edit_reply_markup(
+        InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "👍",
+                        callback_data = "👍 0"
+                    ),
+                    InlineKeyboardButton(
+                        "👎",
+                        callback_data = "👎 0"
+                    )
+                ]
+            ]
+        )
+    )
+
+# Button Trigger
+@app.on_callback_query()
+async def buttonHandler(bot:Update, callback:CallbackQuery):
+    reaction, count = callback.data.split(' ')
+    count = int(count)
+    count += 1
+    buttonMarkup = callback.message.reply_markup.inline_keyboard[0]
+    reply_markup = []
+    for button in buttonMarkup:
+        if reaction == button.text.split(' ')[0]:
+            data = f"{reaction} {count}"
+            reply_markup.append(
+                InlineKeyboardButton(
+                    data,
+                    callback_data = data
+                )
+            )
+        else:
+            reactionButton = button.text
+            data = button.callback_data
+            reply_markup.append(
+                InlineKeyboardButton(
+                    reactionButton,
+                    callback_data = data
+                )
+            )
+    else:
+        return await callback.edit_message_reply_markup(
             InlineKeyboardMarkup(
                 [
-                    [
-                        InlineKeyboardButton(
-                            "👍",
-                            callback_data = "like0"
-                        ),
-                        InlineKeyboardButton(
-                            "👎",
-                            callback_data = "dislike0"
-                        )
-                    ]
+                    reply_markup
                 ]
             )
         )
-    except Exception as e:
-        print(e)
 
 
+### Running Bot
 app.run()
 
