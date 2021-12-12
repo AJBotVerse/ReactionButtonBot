@@ -9,3 +9,6 @@ testexp
 # Session File
 ButtonBot.session
 
+# Cache Files
+__pycache__
+
