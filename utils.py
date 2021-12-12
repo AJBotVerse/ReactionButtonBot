@@ -7,6 +7,9 @@ try:
 except ModuleNotFoundError:
     from config import Config
 
+
+### Connecting to mongodb
+
 class ButtonTrigger:
 
     def __init__(self):
