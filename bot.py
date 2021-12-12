@@ -19,17 +19,21 @@ from pyrogram.types import (
 # Importing Inbuilt Packages
 import logging
 
-# Importing Credentials & Required Data
-try:
-    from testexp.config import Config
-except ModuleNotFoundError:
-    from config import Config
+# Importing developer defined module
+from utils import *
 
 
 ### For Displaying Errors&Warnings Better
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
+logging.getLogger(
+    "pyrogram"
+).setLevel(
+    logging.WARNING
+)
 
 
 ### Starting Bot
