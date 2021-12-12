@@ -3,7 +3,6 @@
 
 ### Importing
 # Importing External Packages
-import re
 from pyrogram import (
     Client,
     filters
@@ -71,35 +70,57 @@ async def buttonAdder(bot:Update, msg:Message):
 async def buttonHandler(bot:Update, callback:CallbackQuery):
     reaction, count = callback.data.split(' ')
     count = int(count)
-    count += 1
-    buttonMarkup = callback.message.reply_markup.inline_keyboard[0]
+    cdb = CheckingDB(
+        callback.message.message_id,
+        str(callback.from_user.id),
+        reaction
+    )
+    result = cdb.start()
     reply_markup = []
-    for button in buttonMarkup:
-        if reaction == button.text.split(' ')[0]:
-            data = f"{reaction} {count}"
+    originalButton = callback.message.reply_markup.inline_keyboard[0]
+    if result:
+        if result == +1:
+            count += 1
+        else:
+            count -= 1
+        for button in originalButton:
+            newstr = button.text.split(" ")
+            if len(newstr) == 1:
+                reactionO1 = newstr[0]
+                countO1 = 0
+            else:
+                reactionO1, countO1 = newstr
+            if reactionO1 == reaction:
+                data1 = f"{reactionO1} {count}"
+            else:
+                data1 = f"{reactionO1} {countO1}"
+            reply_markup.append(
+                InlineKeyboardButton(
+                    data1,
+                    callback_data = data1
+                )
+            )
+    else:
+        for buttonOriginal in originalButton:
+            reactionO, countO = buttonOriginal.text.split(" ")
+            countO = int(countO)
+            if reactionO == reaction:
+                data = f"{reactionO} {countO+1}"
+            else:
+                data = f"{reactionO} {countO-1}"
             reply_markup.append(
                 InlineKeyboardButton(
                     data,
                     callback_data = data
                 )
             )
-        else:
-            reactionButton = button.text
-            data = button.callback_data
-            reply_markup.append(
-                InlineKeyboardButton(
-                    reactionButton,
-                    callback_data = data
-                )
-            )
-    else:
-        return await callback.edit_message_reply_markup(
-            InlineKeyboardMarkup(
-                [
-                    reply_markup
-                ]
-            )
+    return await callback.edit_message_reply_markup(
+        InlineKeyboardMarkup(
+            [
+                reply_markup
+            ]
         )
+    )
 
 
 ### Running Bot
