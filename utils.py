@@ -2,6 +2,7 @@
 
 
 ### Importing
+from pymongo import MongoClient
 try:
     from testexp.config import Config
 except ModuleNotFoundError:
@@ -9,7 +10,11 @@ except ModuleNotFoundError:
 
 
 ### Connecting to mongodb
+client = MongoClient(Config.MONGO_STR)
+db = client["ReactionButtonBot"]
 
+
+### Class
 class ButtonTrigger:
 
     def __init__(self):
