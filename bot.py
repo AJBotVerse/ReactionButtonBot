@@ -10,9 +10,7 @@ from pyrogram import (
 from pyrogram.types import (
     Update,
     Message,
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup
+    CallbackQuery
 )
 
 # Importing Inbuilt Packages
@@ -35,6 +33,10 @@ logging.getLogger(
 )
 
 
+### Global Variable
+taskList = []
+
+
 ### Starting Bot
 app = Client(
     "ButtonBot",
@@ -54,11 +56,11 @@ async def buttonAdder(bot:Update, msg:Message):
                 [
                     InlineKeyboardButton(
                         "👍",
-                        callback_data = "👍 0"
+                        callback_data = "👍"
                     ),
                     InlineKeyboardButton(
                         "👎",
-                        callback_data = "👎 0"
+                        callback_data = "👎"
                     )
                 ]
             ]
@@ -68,59 +70,9 @@ async def buttonAdder(bot:Update, msg:Message):
 # Button Trigger
 @app.on_callback_query()
 async def buttonHandler(bot:Update, callback:CallbackQuery):
-    reaction, count = callback.data.split(' ')
-    count = int(count)
-    cdb = CheckingDB(
-        callback.message.message_id,
-        str(callback.from_user.id),
-        reaction
-    )
-    result = cdb.start()
-    reply_markup = []
-    originalButton = callback.message.reply_markup.inline_keyboard[0]
-    if result:
-        if result == +1:
-            count += 1
-        else:
-            count -= 1
-        for button in originalButton:
-            newstr = button.text.split(" ")
-            if len(newstr) == 1:
-                reactionO1 = newstr[0]
-                countO1 = 0
-            else:
-                reactionO1, countO1 = newstr
-            if reactionO1 == reaction:
-                data1 = f"{reactionO1} {count}"
-            else:
-                data1 = f"{reactionO1} {countO1}"
-            reply_markup.append(
-                InlineKeyboardButton(
-                    data1,
-                    callback_data = data1
-                )
-            )
-    else:
-        for buttonOriginal in originalButton:
-            reactionO, countO = buttonOriginal.text.split(" ")
-            countO = int(countO)
-            if reactionO == reaction:
-                data = f"{reactionO} {countO+1}"
-            else:
-                data = f"{reactionO} {countO-1}"
-            reply_markup.append(
-                InlineKeyboardButton(
-                    data,
-                    callback_data = data
-                )
-            )
-    return await callback.edit_message_reply_markup(
-        InlineKeyboardMarkup(
-            [
-                reply_markup
-            ]
-        )
-    )
+    task = await ButtonTrigger.create(callback)
+    taskList.append(task)
+    return
 
 
 ### Running Bot
