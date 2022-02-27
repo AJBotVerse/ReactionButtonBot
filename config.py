@@ -14,7 +14,7 @@ class Config(object):
     API_HASH = environ.get("API_HASH", "")
     
     channel_id = environ.get("CHANNEL_ID", None)
-    if ',' in auth_channel:
+    if ',' in channel_id:
         CHANNEL_ID = list(map(int, list(channel_id.split(','))))
     else:
         CHANNEL_ID = int(channel_id)
